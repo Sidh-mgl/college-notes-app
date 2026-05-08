@@ -2,12 +2,19 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Note from "@/models/Note";
 import cloudinary from "@/lib/cloudinary";
+import { verifyToken } from "@/lib/jwt";
 
 export const maxDuration = 60;
 
 export async function POST(req) {
     try {
         await dbConnect();
+        
+        const token = req.cookies.get("admin_token")?.value;
+        if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const decoded = await verifyToken(token);
+        if (!decoded || !decoded.userId) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+
         const formData = await req.formData();
         const file = formData.get("file");
         const title = formData.get("title");
@@ -50,6 +57,7 @@ export async function POST(req) {
             subjectId,
             pdfUrl: uploadResponse.secure_url,
             publicId: uploadResponse.public_id,
+            uploadedBy: decoded.userId,
         });
 
         return NextResponse.json({ success: true, note }, { status: 201 });

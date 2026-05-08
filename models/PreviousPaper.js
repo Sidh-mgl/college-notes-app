@@ -8,10 +8,11 @@ const PreviousPaperSchema = new mongoose.Schema({
     section: {
         type: String,
         required: true,
-        enum: ["Sem 1", "Sem 2", "Sem 3", "Back Paper", "End Sem Paper"]
+        enum: ["In-Sem 1", "In-Sem 2", "In-Sem 3", "Back Paper", "End Sem Paper"]
     },
     pdfUrl: { type: String, required: true },
     publicId: { type: String, required: true },
+    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
     downloadCount: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now },
 });

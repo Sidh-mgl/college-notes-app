@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -12,15 +19,96 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Ubuntu", sans-serif;
+}
+
+* {
+  transition: background-color 300ms ease-in-out, color 300ms ease-in-out, border-color 300ms ease-in-out;
+}
+
+/* Apply Ubuntu font globally, except on admin pages which have .admin-view */
+body:not(:has(.admin-view)),
+body:not(:has(.admin-view)) button,
+body:not(:has(.admin-view)) input,
+body:not(:has(.admin-view)) textarea,
+body:not(:has(.admin-view)) select {
+  font-family: "Ubuntu", sans-serif !important;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.ubuntu-light {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.ubuntu-regular {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ubuntu-medium {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.ubuntu-bold {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.ubuntu-light-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.ubuntu-regular-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.ubuntu-medium-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.ubuntu-bold-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+button {
+  cursor: pointer;
+}
+
+@keyframes burst {
+  0% {
+    transform: translateX(0) scaleX(0);
+    opacity: 1;
+  }
+  30% {
+    transform: translateX(12px) scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(30px) scaleX(0);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  body.search-focused .hide-on-search-mobile {
+    display: none !important;
+  }
 }

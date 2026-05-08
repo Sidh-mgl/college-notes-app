@@ -50,7 +50,7 @@ export default function NoteList({ courseId, subjectId, teacherName, subject, in
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-8 sm:p-20 font-sans">
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-8 sm:p-20">
             <main className="max-w-5xl mx-auto">
                 <Link href={`/courses/${courseId}/${subjectId}`} className="inline-flex items-center text-gray-500 hover:text-indigo-600 font-medium mb-8 transition-colors">
                     <ArrowLeft className="w-4 h-4 mr-2" /> Back to Teachers
