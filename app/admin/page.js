@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { PlusCircle, Upload, CheckCircle, AlertCircle, FileText, Trash2, FolderOpen, BookOpen, AlertTriangle, Clock, Users, UserCheck, UserMinus, Shield, Filter, Loader2, BarChart3 } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { PlusCircle, Upload, UploadCloud, CheckCircle, AlertCircle, FileText, Trash2, FolderOpen, BookOpen, AlertTriangle, Clock, Users, UserCheck, UserMinus, Shield, Filter, Loader2, BarChart3 } from "lucide-react";
 import SearchableDropdown from "@/components/SearchableDropdown";
+import DragDropFileInput from "@/components/DragDropFileInput";
 
 export default function AdminDashboard() {
     const [courses, setCourses] = useState([]);
@@ -67,6 +68,47 @@ export default function AdminDashboard() {
     useEffect(() => {
         fetchData();
     }, []);
+
+    // ── Global drag-anywhere-to-upload ──────────────────────────────────────
+    const [globalDragging, setGlobalDragging] = useState(false);
+    const dragCounter = useRef(0); // counts nested dragenter/dragleave pairs
+
+    useEffect(() => {
+        const onDragEnter = (e) => {
+            // Only react to file drags (not element drags)
+            if (!e.dataTransfer.types.includes("Files")) return;
+            dragCounter.current += 1;
+            if (dragCounter.current === 1) setGlobalDragging(true);
+        };
+        const onDragLeave = (e) => {
+            if (!e.dataTransfer.types.includes("Files")) return;
+            dragCounter.current -= 1;
+            if (dragCounter.current === 0) setGlobalDragging(false);
+        };
+        const onDragOver = (e) => e.preventDefault();
+        const onDrop = (e) => {
+            e.preventDefault();
+            dragCounter.current = 0;
+            setGlobalDragging(false);
+            const droppedFile = e.dataTransfer.files?.[0];
+            if (!droppedFile || droppedFile.type !== "application/pdf") return;
+            // Set file on the currently active upload tab
+            if (activeUploadTab === "paper")      setPaperForm(prev => ({ ...prev, file: droppedFile }));
+            else if (activeUploadTab === "note")  setNoteForm(prev => ({ ...prev, file: droppedFile }));
+            else                                  setAssignmentForm(prev => ({ ...prev, file: droppedFile }));
+        };
+
+        document.addEventListener("dragenter",  onDragEnter);
+        document.addEventListener("dragleave",  onDragLeave);
+        document.addEventListener("dragover",   onDragOver);
+        document.addEventListener("drop",       onDrop);
+        return () => {
+            document.removeEventListener("dragenter",  onDragEnter);
+            document.removeEventListener("dragleave",  onDragLeave);
+            document.removeEventListener("dragover",   onDragOver);
+            document.removeEventListener("drop",       onDrop);
+        };
+    }, [activeUploadTab]); // re-bind when tab changes so closure captures latest tab
 
     const handleLogout = async () => {
         try {
@@ -446,8 +488,69 @@ export default function AdminDashboard() {
         }
     };
 
+    const tabLabel = activeUploadTab === "paper" ? "Paper" : activeUploadTab === "note" ? "Note" : "Assignment";
+    const tabAccentClass = activeUploadTab === "paper"
+        ? "border-indigo-400 text-indigo-300"
+        : activeUploadTab === "note"
+        ? "border-blue-400 text-blue-300"
+        : "border-green-400 text-green-300";
+    const tabIconClass = activeUploadTab === "paper"
+        ? "text-indigo-400"
+        : activeUploadTab === "note"
+        ? "text-blue-400"
+        : "text-green-400";
+
     return (
         <div className="admin-view min-h-screen bg-gray-50 dark:bg-[#121212] p-8 sm:p-12 font-sans relative text-gray-900 dark:text-gray-100">
+
+            {/* ── Global Drop Overlay ── */}
+            {globalDragging && (
+                <div
+                    className="fixed inset-0 z-[100] flex flex-col items-center justify-center pointer-events-none"
+                    style={{
+                        background: "rgba(0,0,0,0.65)",
+                        backdropFilter: "blur(6px)",
+                        WebkitBackdropFilter: "blur(6px)",
+                    }}
+                >
+                    {/* Animated dashed border frame */}
+                    <div
+                        className={`flex flex-col items-center justify-center gap-5 rounded-3xl border-4 border-dashed px-16 py-14 transition-all duration-200 ${tabAccentClass}`}
+                        style={{
+                            animation: "globalDropPulse 1.2s ease-in-out infinite",
+                            boxShadow: activeUploadTab === "paper"
+                                ? "0 0 60px 10px rgba(99,102,241,0.35)"
+                                : activeUploadTab === "note"
+                                ? "0 0 60px 10px rgba(59,130,246,0.35)"
+                                : "0 0 60px 10px rgba(34,197,94,0.35)",
+                        }}
+                    >
+                        <UploadCloud
+                            style={{ animation: "globalDropBounce 0.8s ease-in-out infinite" }}
+                            className={`w-20 h-20 ${tabIconClass}`}
+                        />
+                        <div className="text-center">
+                            <p className="text-white text-3xl font-extrabold tracking-tight">
+                                Drop PDF to upload
+                            </p>
+                            <p className={`text-lg font-semibold mt-1 ${tabIconClass}`}>
+                                Will be added as a <span className="uppercase">{tabLabel}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <style>{`
+                        @keyframes globalDropPulse {
+                            0%, 100% { opacity: 1; transform: scale(1); }
+                            50%       { opacity: 0.85; transform: scale(1.03); }
+                        }
+                        @keyframes globalDropBounce {
+                            0%, 100% { transform: translateY(0); }
+                            50%       { transform: translateY(-10px); }
+                        }
+                    `}</style>
+                </div>
+            )}
+
             {/* Modals */}
             {deleteModal.isOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 dark:bg-black/60 backdrop-blur-sm">
@@ -654,12 +757,11 @@ export default function AdminDashboard() {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">PDF File</label>
-                                    <input
-                                        type="file"
-                                        accept="application/pdf"
-                                        required
-                                        className="w-full border border-gray-200 dark:border-gray-700 p-2 rounded-xl outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 dark:file:bg-indigo-900/40 file:text-indigo-700 dark:file:text-indigo-400 hover:file:bg-indigo-100 dark:hover:file:bg-indigo-900/60 text-black dark:text-white bg-transparent dark:bg-[#121212]"
-                                        onChange={(e) => setPaperForm({ ...paperForm, file: e.target.files[0] })}
+                                    <DragDropFileInput
+                                        file={paperForm.file}
+                                        onChange={(f) => setPaperForm({ ...paperForm, file: f })}
+                                        accentColor="indigo"
+                                        disabled={isUploading}
                                     />
                                 </div>
                                 <button disabled={isUploading} type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2">
@@ -705,12 +807,11 @@ export default function AdminDashboard() {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">PDF File</label>
-                                    <input
-                                        type="file"
-                                        accept="application/pdf"
-                                        required
-                                        className="w-full border border-gray-200 dark:border-gray-700 p-2 rounded-xl outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 dark:file:bg-blue-900/40 file:text-blue-700 dark:file:text-blue-400 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/60 text-black dark:text-white bg-transparent dark:bg-[#121212]"
-                                        onChange={(e) => setNoteForm({ ...noteForm, file: e.target.files[0] })}
+                                    <DragDropFileInput
+                                        file={noteForm.file}
+                                        onChange={(f) => setNoteForm({ ...noteForm, file: f })}
+                                        accentColor="blue"
+                                        disabled={isUploading}
                                     />
                                 </div>
                                 <button disabled={isUploading} type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2">
@@ -756,12 +857,11 @@ export default function AdminDashboard() {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">PDF File</label>
-                                    <input
-                                        type="file"
-                                        accept="application/pdf"
-                                        required
-                                        className="w-full border border-gray-200 dark:border-gray-700 p-2 rounded-xl outline-none text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 dark:file:bg-green-900/40 file:text-green-700 dark:file:text-green-400 hover:file:bg-green-100 dark:hover:file:bg-green-900/60 text-black dark:text-white bg-transparent dark:bg-[#121212]"
-                                        onChange={(e) => setAssignmentForm({ ...assignmentForm, file: e.target.files[0] })}
+                                    <DragDropFileInput
+                                        file={assignmentForm.file}
+                                        onChange={(f) => setAssignmentForm({ ...assignmentForm, file: f })}
+                                        accentColor="green"
+                                        disabled={isUploading}
                                     />
                                 </div>
                                 <button disabled={isUploading} type="submit" className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2">
