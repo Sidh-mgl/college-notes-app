@@ -19,9 +19,14 @@ const inter = Inter({
 });
 
 async function getCourses() {
-  await dbConnect();
-  const courses = await Course.find({}).sort({ name: 1 }).lean();
-  return JSON.parse(JSON.stringify(courses));
+  try {
+    await dbConnect();
+    const courses = await Course.find({}).sort({ name: 1 }).lean();
+    return JSON.parse(JSON.stringify(courses));
+  } catch (error) {
+    console.error("Failed to fetch courses:", error);
+    return [];
+  }
 }
 
 export default async function Home() {
