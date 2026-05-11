@@ -42,3 +42,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scratch / one-off scripts (do not deploy)
+fix_admin.js
+tmp_*.js
+upgrade.js
+
+# logs
+server.log
+eslint-out.json
