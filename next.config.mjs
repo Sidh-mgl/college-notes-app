@@ -1,5 +1,14 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  turbopack: {
+    root: __dirname,
+  },
+
   // Prevent these packages from being bundled by webpack on the server
   // (needed for native bindings / binary modules on Azure Linux)
   serverExternalPackages: ["mongoose", "bcryptjs", "cloudinary"],
