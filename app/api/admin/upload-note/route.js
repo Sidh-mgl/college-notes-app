@@ -4,7 +4,8 @@ import Note from "@/models/Note";
 import cloudinary from "@/lib/cloudinary";
 import { verifyToken } from "@/lib/jwt";
 
-export const maxDuration = 60;
+// Note: Azure App Service handles request timeouts via its own settings (default 230s).
+// The Vercel-only `maxDuration` is not used here.
 
 export async function POST(req) {
     try {

@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Prevent mongoose from being bundled by webpack (required for Next.js 15 serverless)
-  serverExternalPackages: ["mongoose", "bcryptjs"],
+  // Prevent these packages from being bundled by webpack on the server
+  // (needed for native bindings / binary modules on Azure Linux)
+  serverExternalPackages: ["mongoose", "bcryptjs", "cloudinary"],
 
   // Allow next/image to load images from Cloudinary
   images: {
