@@ -20,6 +20,7 @@ export default function SearchableDropdown({
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setSearchQuery("");
         setIsOpen(false);
       }
     };
@@ -31,8 +32,6 @@ export default function SearchableDropdown({
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
-    } else {
-      setSearchQuery(""); // Reset search on close
     }
   }, [isOpen]);
 
@@ -47,7 +46,12 @@ export default function SearchableDropdown({
       <button
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          if (isOpen) {
+            setSearchQuery("");
+          }
+          setIsOpen(!isOpen);
+        }}
         className={`w-full flex items-center justify-between border p-3 rounded-xl outline-none transition-all ${
           disabled 
             ? "bg-gray-100 dark:bg-[#2A2A2A] border-gray-200 dark:border-gray-700 cursor-not-allowed text-gray-400 dark:text-gray-500" 
@@ -82,6 +86,7 @@ export default function SearchableDropdown({
                   type="button"
                   onClick={() => {
                     onChange(option._id);
+                    setSearchQuery("");
                     setIsOpen(false);
                   }}
                   className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between ${

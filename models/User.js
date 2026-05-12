@@ -23,6 +23,15 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isTemporary: {
+    type: Boolean,
+    default: false,
+  },
+  temporaryExpiresAt: {
+    type: Date,
+    default: null,
+    index: { expireAfterSeconds: 0 },
+  },
   createdAt: {
     type: Date,
     default: Date.now,

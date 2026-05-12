@@ -67,6 +67,7 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // ── Global drag-anywhere-to-upload ──────────────────────────────────────
@@ -487,6 +488,17 @@ export default function AdminDashboard() {
             setStatus({ type: "error", message: "Failed to remove admin role." });
         }
     };
+
+    const normalizedUserSearchQuery = userSearchQuery.toLowerCase();
+    const filteredUsersList = usersList.filter((user) => {
+        const name = user.name || "";
+        const email = user.email || "";
+
+        return (
+            name.toLowerCase().includes(normalizedUserSearchQuery) ||
+            email.toLowerCase().includes(normalizedUserSearchQuery)
+        );
+    });
 
     const tabLabel = activeUploadTab === "paper" ? "Paper" : activeUploadTab === "note" ? "Note" : "Assignment";
     const tabAccentClass = activeUploadTab === "paper"
@@ -1194,7 +1206,7 @@ export default function AdminDashboard() {
                                         value={userSearchQuery}
                                         onChange={(e) => setUserSearchQuery(e.target.value)}
                                     />
-                                    <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 py-1.5 px-4 rounded-full font-bold">{usersList.filter(u => u.name.toLowerCase().includes(userSearchQuery.toLowerCase()) || u.email.toLowerCase().includes(userSearchQuery.toLowerCase())).length} Users</span>
+                                    <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 py-1.5 px-4 rounded-full font-bold">{filteredUsersList.length} Users</span>
                                 </div>
                             </div>
                             <div className="overflow-x-auto">
@@ -1208,10 +1220,10 @@ export default function AdminDashboard() {
                                         </tr>
                                     </thead>
                                     <tbody className="text-sm">
-                                        {usersList.filter(u => u.name.toLowerCase().includes(userSearchQuery.toLowerCase()) || u.email.toLowerCase().includes(userSearchQuery.toLowerCase())).map((user) => (
+                                        {filteredUsersList.map((user) => (
                                             <tr key={user._id} className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] transition-colors">
-                                                <td className="p-4 font-medium text-gray-900 dark:text-gray-100">{user.name}</td>
-                                                <td className="p-4 text-gray-500 dark:text-gray-400">{user.email}</td>
+                                                <td className="p-4 font-medium text-gray-900 dark:text-gray-100">{user.name || "Unnamed user"}</td>
+                                                <td className="p-4 text-gray-500 dark:text-gray-400">{user.email || "-"}</td>
                                                 <td className="p-4 text-center">
                                                     <span className={`inline-flex items-center justify-center text-xs font-bold px-3 py-1.5 rounded-full ${user.role === "superadmin" ? "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300" : user.role === "admin" ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300" : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"}`}>
                                                         {user.role}
@@ -1230,7 +1242,7 @@ export default function AdminDashboard() {
                                                             </button>
                                                         )}
                                                         {user.role !== "superadmin" && (
-                                                            <button onClick={() => confirmDelete("users", user._id, user.name)} className="text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors" title="Delete User">
+                                                            <button onClick={() => confirmDelete("users", user._id, user.name || user.email || "this user")} className="text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors" title="Delete User">
                                                                 <Trash2 className="w-4 h-4" />
                                                             </button>
                                                         )}

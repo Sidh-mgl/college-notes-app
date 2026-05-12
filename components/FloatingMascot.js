@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function FloatingMascot() {
   return (
     <div
@@ -7,9 +9,11 @@ export default function FloatingMascot() {
         /* Desktop Positioning */
         lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:-right-10 lg:w-48 xl:w-64`}
     >
-      <img
+      <Image
         src="/padhloo.png"
         alt="Padhloo Mascot"
+        width={256}
+        height={256}
         className="w-full object-contain drop-shadow-2xl"
       />
     </div>

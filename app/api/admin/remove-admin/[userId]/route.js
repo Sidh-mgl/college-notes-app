@@ -18,6 +18,10 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
     }
 
+    if (userId === payload.userId) {
+      return NextResponse.json({ error: "Self-demotion is not allowed" }, { status: 400 });
+    }
+
     await connectDB();
     const userToUpdate = await User.findById(userId);
 
@@ -30,6 +34,7 @@ export async function POST(req, { params }) {
     }
 
     userToUpdate.role = "user";
+    userToUpdate.isApproved = false;
     await userToUpdate.save();
 
     return NextResponse.json({ message: "Admin role removed successfully" });

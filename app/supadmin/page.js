@@ -38,6 +38,7 @@ export default function SuperadminPanel() {
   useEffect(() => {
     fetchUsers();
     fetchAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchAnalytics = async () => {

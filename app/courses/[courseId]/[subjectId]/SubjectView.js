@@ -26,18 +26,21 @@ export default function SubjectView({ courseId, subjectId, subject, initialNotes
         if (activeTab === "papers" && years.length === 0) {
             fetchYears();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
 
     useEffect(() => {
         if (selectedYear) {
             fetchPapers(selectedYear);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedYear]);
 
     useEffect(() => {
         if (activeTab === "assignments" && !assignmentsFetched) {
             fetchAssignments();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab, assignmentsFetched]);
 
     const fetchAssignments = async () => {
