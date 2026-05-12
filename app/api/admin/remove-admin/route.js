@@ -20,7 +20,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
     }
 
-    if (userId === payload.id) {
+    if (userId === payload.userId) {
       return NextResponse.json({ error: "Self-demotion is not allowed" }, { status: 400 });
     }
 
@@ -38,9 +38,7 @@ export async function POST(req) {
     }
 
     user.role = "user";
-    // We can keep isApproved as true or false, but for regular users it doesn't matter much.
-    // Setting it back to false is safer in case they are re-promoted to admin later and need approval again.
-    // However, the prompt says "allow -> remove admin role", so keeping them as standard users.
+    user.isApproved = false;
     await user.save();
 
     return NextResponse.json({ message: "Admin role removed successfully" });

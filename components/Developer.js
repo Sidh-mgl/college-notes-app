@@ -99,7 +99,7 @@ export default function Developer() {
         {/* Content Section */}
         <div className="py-8 px-6 flex flex-col items-center text-center w-full">
           <p className="text-gray-600 dark:text-gray-400 font-medium text-[16px] mb-2">
-            assist by
+            co-creator
           </p>
           <h3 className="text-[22px] font-bold text-gray-900 dark:text-gray-100 mb-6 tracking-wide uppercase">
             Mohit Sharma

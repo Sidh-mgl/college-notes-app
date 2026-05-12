@@ -1,29 +1,42 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useSyncExternalStore } from "react";
 
 const ThemeContext = createContext({
-  theme: "light",
+  theme: null,
   toggleTheme: () => {},
   mounted: false,
 });
 
-export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState("light");
-  const [mounted, setMounted] = useState(false);
+const THEME_CHANGE_EVENT = "themechange";
 
-  useEffect(() => {
-    setMounted(true);
-    // Check if the HTML element has the 'dark' class, which is set by the inline script in layout.js
-    const isDark = document.documentElement.classList.contains("dark");
-    setTheme(isDark ? "dark" : "light");
-  }, []);
+function subscribeTheme(callback) {
+  window.addEventListener(THEME_CHANGE_EVENT, callback);
+  window.addEventListener("storage", callback);
+
+  return () => {
+    window.removeEventListener(THEME_CHANGE_EVENT, callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
+function getThemeSnapshot() {
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+function getServerThemeSnapshot() {
+  return null;
+}
+
+export function ThemeProvider({ children }) {
+  const theme = useSyncExternalStore(subscribeTheme, getThemeSnapshot, getServerThemeSnapshot);
+  const mounted = theme !== null;
 
   const toggleTheme = () => {
     const isDark = document.documentElement.classList.toggle("dark");
     const newTheme = isDark ? "dark" : "light";
-    setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
+    window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
   };
 
   return (

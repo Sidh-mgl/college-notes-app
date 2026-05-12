@@ -18,9 +18,15 @@ export async function GET(req) {
     }
 
     await connectDB();
-    const users = await User.find({}).select("-password").sort({ createdAt: -1 });
+    const users = await User.find({}).select("-password").sort({ createdAt: -1 }).lean();
 
-    return NextResponse.json(users);
+    return NextResponse.json(
+      users.map((user) => ({
+        ...user,
+        name: user.name || "",
+        email: user.email || "",
+      }))
+    );
   } catch (error) {
     console.error("Fetch users error:", error);
     return NextResponse.json(

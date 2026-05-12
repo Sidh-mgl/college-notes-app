@@ -94,7 +94,7 @@ export default function SearchBar() {
                     {!isLoading && !hasResults ? (
                         <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                             <Search className="w-8 h-8 mx-auto text-gray-300 dark:text-gray-600 mb-3" />
-                            No results found for "{query}"
+                            No results found for &quot;{query}&quot;
                         </div>
                     ) : (
                         <div className="py-2">

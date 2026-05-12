@@ -1,15 +1,56 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Link2, Check } from "lucide-react";
 
+// SVGs for social platforms since lucide may lack brand icons
+function WhatsAppIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+    </svg>
+  );
+}
+
+function TelegramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-send">
+      <path d="m22 2-7 20-4-9-9-4Z"></path>
+      <path d="M22 2 11 13"></path>
+    </svg>
+  );
+}
+
+function LinkedInIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-linkedin">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+      <rect width="4" height="12" x="2" y="9"></rect>
+      <circle cx="4" cy="4" r="2"></circle>
+    </svg>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-instagram">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+    </svg>
+  );
+}
+
 export default function ShareResources() {
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(() => (typeof window === "undefined" ? "" : window.location.href));
   const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
-    // Get the current page URL dynamically
-    setUrl(window.location.href);
+    const handleUrlChange = () => setUrl(window.location.href);
+
+    window.addEventListener("popstate", handleUrlChange);
+    return () => window.removeEventListener("popstate", handleUrlChange);
   }, []);
 
   const showToast = (message) => {
@@ -67,43 +108,20 @@ export default function ShareResources() {
     }
   };
 
-  // SVGs for social platforms since lucide may lack brand icons
-  const WhatsAppIcon = () => (
-    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle">
-      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-    </svg>
-  );
-
-  const TelegramIcon = () => (
-    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-send">
-      <path d="m22 2-7 20-4-9-9-4Z"></path>
-      <path d="M22 2 11 13"></path>
-    </svg>
-  );
-
-  const LinkedInIcon = () => (
-    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-linkedin">
-      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-      <rect width="4" height="12" x="2" y="9"></rect>
-      <circle cx="4" cy="4" r="2"></circle>
-    </svg>
-  );
-
-  const InstagramIcon = () => (
-    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-instagram">
-      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
-    </svg>
-  );
-
   return (
     <div className="relative max-w-6xl w-full mx-auto px-4 mt-8 mb-8">
       <div className="bg-gradient-to-br from-[#ffffff] to-[#faf5ff] dark:from-[#1E1E1E] dark:to-[#1a1a1a] rounded-[20px] p-[25px] sm:p-8 shadow-[0_10px_30px_rgba(124,58,237,0.15)] dark:shadow-none border border-[#7c3aed]/10 w-[90%] max-w-[800px] mx-auto relative z-10 flex flex-col md:flex-row items-center justify-center gap-[30px]">
 
         {/* GIF on the left taking up major space */}
         <div className="w-full sm:w-[45%] shrink-0 flex justify-center md:justify-end">
-          <img src="/cry.gif" alt="Crying Animation" className="w-full max-w-[320px] h-auto rounded-xl shadow-sm object-cover" loop="true" />
+          <Image
+            src="/cry.gif"
+            alt="Crying Animation"
+            width={320}
+            height={240}
+            unoptimized
+            className="w-full max-w-[320px] h-auto rounded-xl shadow-sm object-cover"
+          />
         </div>
 
         {/* Title and Buttons on the right */}

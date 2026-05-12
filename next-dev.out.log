@@ -1,0 +1,18 @@
+
+> college-notes@0.1.0 dev
+> next dev -p 5000
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:5000
+- Network:       http://192.168.56.1:5000
+- Environments: .env.local
+✓ Ready in 1155ms
+Creating turbopack project {
+  dir: 'C:\\Users\\mohit\\Downloads\\college-notes-app-main\\college-notes-app-main',
+  testMode: true
+}
+
+ POST /api/auth/login 200 in 3.1s (next.js: 1009ms, application-code: 2.1s)
+ GET /api/auth/me 200 in 131ms (next.js: 69ms, application-code: 63ms)
+ GET /admin 200 in 505ms (next.js: 149ms, proxy.ts: 93ms, application-code: 263ms)
+[?25h

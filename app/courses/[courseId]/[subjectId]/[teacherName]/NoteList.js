@@ -70,7 +70,7 @@ export default function NoteList({ courseId, subjectId, teacherName, subject, in
                     <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-3xl border border-white/40 shadow-xl">
                         <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                         <h3 className="text-xl font-medium text-gray-600">No notes found</h3>
-                        <p className="text-gray-400 mt-2">This teacher hasn't uploaded any notes yet.</p>
+                        <p className="text-gray-400 mt-2">This teacher has not uploaded any notes yet.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

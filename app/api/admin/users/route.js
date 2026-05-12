@@ -14,9 +14,15 @@ export async function GET(req) {
     }
 
     await connectDB();
-    const users = await User.find({}, { name: 1, email: 1, role: 1, _id: 1 }).sort({ createdAt: -1 });
+    const users = await User.find({}, { name: 1, email: 1, role: 1, isApproved: 1, _id: 1 }).sort({ createdAt: -1 }).lean();
 
-    return NextResponse.json({ users });
+    return NextResponse.json({
+      users: users.map((user) => ({
+        ...user,
+        name: user.name || "",
+        email: user.email || "",
+      })),
+    });
   } catch (error) {
     console.error("Fetch users error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
