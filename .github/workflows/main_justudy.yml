@@ -19,16 +19,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Node.js version
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: '22.x'
-          cache: 'npm'
 
-      - name: Install, scan, lint, build, and test
+      - name: npm install, build, and test
         run: |
-          npm ci
-          npm audit --audit-level=moderate
-          npm run lint
+          npm install
           npm run build --if-present
           npm run test --if-present
 
@@ -36,10 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: |
-            .
-            !node_modules
-          if-no-files-found: warn
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,33 +51,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_8B3410335EE74EBDA0840F5C0B2185D1 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4F7D255E23774724A958C940B280A87D }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0BB752E4EC34430CB6935B6A2BBB7DB2 }}
-
-      - name: Configure Azure runtime
-        uses: azure/appservice-settings@v1
-        with:
-          app-name: 'justudy'
-          slot-name: 'Production'
-          app-settings-json: |
-            [
-              { "name": "WEBSITE_NODE_DEFAULT_VERSION", "value": "~22", "slotSetting": false },
-              { "name": "SCM_DO_BUILD_DURING_DEPLOYMENT", "value": "true", "slotSetting": false },
-              { "name": "ENABLE_ORYX_BUILD", "value": "true", "slotSetting": false }
-            ]
-
-      - name: Configure Azure startup command
-        run: |
-          RESOURCE_GROUP=$(az webapp list --query "[?name=='justudy'].resourceGroup | [0]" -o tsv)
-          if [ -z "$RESOURCE_GROUP" ]; then
-            echo "Could not find resource group for Azure Web App 'justudy'."
-            exit 1
-          fi
-          az webapp config set \
-            --resource-group "$RESOURCE_GROUP" \
-            --name "justudy" \
-            --startup-file "npm start"
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AD8B7127522F417FBFC6B16B9C2732B6 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_929781A915F34FFCA2F9C4BAC2F40E86 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_486D518B9CE74DA094CB83C1A66053B4 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -92,3 +62,4 @@ jobs:
           app-name: 'justudy'
           slot-name: 'Production'
           package: .
+          
