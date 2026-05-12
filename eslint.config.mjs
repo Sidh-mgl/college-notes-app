@@ -7,6 +7,7 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    "azure-package/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

@@ -9,9 +9,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "azure:package": "node scripts/prepare-azure-standalone.mjs",
+    "azure:smoke": "node scripts/smoke-standalone.mjs",
     "start": "next start",
-    "lint": "eslint",
-    "recovery:temp-admin": "node scripts/create-temp-superadmin.mjs"
+    "lint": "eslint"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
