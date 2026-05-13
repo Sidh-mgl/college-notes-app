@@ -24,14 +24,6 @@ export async function POST(req) {
       );
     }
 
-    if (user.isTemporary && user.temporaryExpiresAt && user.temporaryExpiresAt <= new Date()) {
-      await User.deleteOne({ _id: user._id });
-      return NextResponse.json(
-        { message: "Temporary admin expired" },
-        { status: 401 }
-      );
-    }
-
     if (user.role === "admin" && !user.isApproved) {
       return NextResponse.json(
         { message: "Admin approval pending" },

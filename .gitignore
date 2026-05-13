@@ -19,6 +19,7 @@
 
 # production
 /build
+/azure-package
 
 # misc
 .DS_Store
@@ -30,7 +31,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files — block real secrets but allow the example template
+# env files - block real secrets but allow the example template
 .env
 .env.local
 .env.*.local
@@ -43,11 +44,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# scratch / one-off scripts (do not deploy)
+# scratch / one-off scripts
 fix_admin.js
 tmp_*.js
 upgrade.js
 
 # logs
-server.log
+*.log
 eslint-out.json
+
+# accidental nested repository copies
+mohit-fork/
